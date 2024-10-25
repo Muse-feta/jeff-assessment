@@ -273,7 +273,31 @@ Conclusion: _______
   const result = await response.json();
   var assessment = result.choices?.[0]?.message?.content || "No assessment generated.";
   assessment = assessment.replace(/[*#]/g, "");
+  assessment = assessment.replace(
+    /(?<!\b(Date of Assessment|Gender|Marital Status|Education and Occupation|Presenting Problems\/Chief Complaint|Behavioral Health|Psychosocial Factors|Mental Status Exam|Strengths and Risk Factors|Treatment Plan|Conclusion)):\s/g,
+    ""
+  );
+  // assessment = assessment.replace(/\n/g, " ");
+  const titles = [
+    "Date of Assessment:",
+    "Gender:",
+    "Marital Status:",
+    "Education and Occupation:",
+    "Presenting Problems/Chief Complaint:",
+    "Behavioral Health:",
+    "Psychosocial Factors:",
+    "Mental Status Exam:",
+    "Strengths and Risk Factors:",
+    "Treatment Plan:",
+    "Conclusion:",
+  ];
+  titles.forEach((title) => {
+    const regex = new RegExp(`\\s*${title}`, "g");
+    assessment = assessment.replace(regex, `\n${title}`);
+  });
+  assessment = assessment.replace(/\n(?=\w+:\s)/g, " ");
   console.log("Assessment:", assessment);
+
 
   return NextResponse.json({ assessment });
 }
