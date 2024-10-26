@@ -41,6 +41,11 @@ const AssessmentForm: React.FC = () => {
     suicidalThoughts: false,
     selfHarm: false,
     eatingDisorders: false,
+    arrestHistory: false,
+    strengthsRiskFactors: "",
+    treatmentPlan: "",
+    substanceUse: false,
+    medicalHistory: "",
   });
 
   const [assessment, setAssessment] = useState<string>("");
@@ -217,6 +222,19 @@ const AssessmentForm: React.FC = () => {
               name="symptoms"
               className="border p-2 rounded-lg w-full mt-1 focus:outline-none focus:ring focus:ring-blue-300"
               value={formData.symptoms}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-600">
+              Medical History
+            </label>
+            <textarea
+              name="medicalHistory"
+              className="border p-2 rounded-lg w-full mt-1 focus:outline-none focus:ring focus:ring-blue-300"
+              placeholder="Medical history, medications, allergies, etc."
+              value={formData.medicalHistory}
               onChange={handleChange}
               required
             />
@@ -409,6 +427,31 @@ const AssessmentForm: React.FC = () => {
               onChange={handleChange}
             />
           </div>
+          {/* Strengths, Risk, and Protective Factors */}
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-600">
+              Strengths, Risk, and Protective Factors
+            </label>
+            <textarea
+              name="strengthsRiskFactors"
+              placeholder="E.g., Resilience, Empathy, Adaptability, Creativity, Leadership, Communication, Problem-Solving, Integrity, Teamwork, Time Management"
+              className="border p-2 rounded-lg w-full mt-1 focus:outline-none focus:ring focus:ring-blue-300"
+              value={formData.strengthsRiskFactors}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-600">
+              Treatment Plan
+            </label>
+            <textarea
+              name="treatmentPlan"
+              placeholder="Treatment Plan"
+              className="border p-2 rounded-lg w-full mt-1 focus:outline-none focus:ring focus:ring-blue-300"
+              value={formData.treatmentPlan}
+              onChange={handleChange}
+            />
+          </div>
           {/* Insight */}
           <div>
             <label className="block text-sm font-medium text-gray-600">
@@ -467,6 +510,31 @@ const AssessmentForm: React.FC = () => {
             <label className="block text-sm font-medium text-gray-600">
               Have you attempted suicide in the past or do you ever have
               thoughts about not wanting to be here?
+            </label>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="arrestHistory"
+              className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              checked={formData.arrestHistory}
+              onChange={handleChange}
+            />
+            <label className="block text-sm font-medium text-gray-600">
+              Have you ever been arrested?
+            </label>
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="substanceUse"
+              className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              checked={formData.substanceUse}
+              onChange={handleChange}
+            />
+            <label className="block text-sm font-medium text-gray-600">
+              Have you ever used mood-altering substances?
             </label>
           </div>
           <div className="flex items-center">
