@@ -58,6 +58,13 @@ interface AssessmentData {
   };
   Conclusion: {
     Summary: string;
+    IdentityAndCulturalConsiderations: string;
+    ExplanationOfIllness: string;
+    StrengthsPreferencesAndPriorities: string;
+    StageOfChange: string;
+    SummaryOfPriorityNeedsAndBarriers: string;
+    Hypotheses: string;
+    TreatmentRecommendations: string;
   };
 }
 
@@ -958,6 +965,56 @@ const AssessmentForm: React.FC = () => {
               <p className="text-sm mb-2">
                 <span className="font-bold">Summary:</span>{" "}
                 {assessment.Conclusion.Summary}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">
+                  Identity and Cultural Considerations:
+                </span>{" "}
+                {assessment.Conclusion.IdentityAndCulturalConsiderations}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">
+                  Explanation Of Illness:
+                </span>{" "}
+                {assessment.Conclusion.ExplanationOfIllness}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">
+                  Strengths, Preferences, and Priorities:
+                </span>{" "}
+                {assessment.Conclusion.StrengthsPreferencesAndPriorities}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Stage Of Change:</span>{" "}
+                {assessment.Conclusion.StageOfChange}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">
+                  Summary Of Priority Needs And Barriers:
+                </span>{" "}
+                {assessment.Conclusion.SummaryOfPriorityNeedsAndBarriers}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Hypotheses:</span>{" "}
+                {assessment.Conclusion.Hypotheses}
+              </p>
+            </div>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Treatment Recommendations:</span>{" "}
+                {assessment.Conclusion.TreatmentRecommendations}
               </p>
             </div>
           </div>
