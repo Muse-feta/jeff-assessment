@@ -5,8 +5,63 @@ import { useAssessment } from "@/context/data-provider";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
+interface AssessmentData {
+  ClientInformation: {
+    Gender: string;
+    DateOfAssessment: string;
+    MaritalStatus: string;
+    Education: string;
+    Occupation: string;
+  };
+  SocialHistory: {
+    MaritalStatus: string;
+    Spouse: string;
+    Children: string;
+    Household: string;
+    Education: string;
+    Occupation: string;
+  };
+  PresentingConcerns: {
+    PrimarySymptoms: string;
+    DailyImpact: string;
+    Duration: string;
+    Diagnosis: string;
+    SeenSpecialist: string;
+    SpecialistDuration: string;
+    TreatmentGoals: string;
+  };
+  CurrentSymptomsChecklist: {
+    Mood: string;
+    Affect: string;
+    ThoughtProcess: string;
+    ThoughtContent: string;
+    Perceptions: string;
+    Hallucinations: string;
+    SuicidalThoughts: string;
+    SelfHarm: string;
+    EatingDisorders: string;
+    ArrestHistory: string;
+  };
+  DiagnosticImpressions: {
+    Diagnosis: string;
+    RelatedSymptoms: string;
+  };
+  Formulation: {
+    BiologicalFactors: string;
+    PsychologicalFactors: string[];
+    SocialFactors: string[];
+  };
+  Recommendations: {
+    TreatmentPlan: string;
+    SubstanceUse: string;
+    ContinuedCareRecommendations: string;
+  };
+  Conclusion: {
+    Summary: string;
+  };
+}
+
 const AssessmentForm: React.FC = () => {
-  const { setAssessmentData, assessmentData } = useAssessment();
   const assessmentRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -48,9 +103,18 @@ const AssessmentForm: React.FC = () => {
     medicalHistory: "",
   });
 
-  const [assessment, setAssessment] = useState<string>("");
 
-  const handleChange = (
+  const [assessment, setAssessment] = useState<AssessmentData | null>(null);
+
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Updates the formData state based on user input changes.
+ * Supports input types: text, textarea, select, and checkbox.
+ * 
+ * @param e - The change event triggered by the user interaction.
+ *   Supports HTMLInputElement, HTMLTextAreaElement, and HTMLSelectElement.
+ */
+/******  e5f646f6-1111-4a8b-b6fb-387a1dc6e924  *******/  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -90,9 +154,8 @@ const AssessmentForm: React.FC = () => {
 
       const data = await response.json();
       console.log("data", data);
-      setAssessment(data.assessment);
-      // Set assessment data in context
-      setAssessmentData(data);
+      setAssessment(data);
+      console.log("assessment", assessment);
 
       //  console.log("assessmentData", assessmentData);
       // Navigate to results page
@@ -104,10 +167,6 @@ const AssessmentForm: React.FC = () => {
     }
   };
 
-  const assessmentLines = assessment
-    .split("\n")
-    .filter((line) => line.trim() !== "")
-    .map((line) => line.split(": ").map((part) => part.trim()));
 
   const downloadPDF = async () => {
     if (assessmentRef.current) {
@@ -664,40 +723,249 @@ const AssessmentForm: React.FC = () => {
 
       {assessment && (
         <div
-          className="mt-6 p-4 border rounded-md bg-gray-50"
+          className="p-6 border border-gray-300 rounded-md bg-white shadow-lg"
           ref={assessmentRef}
         >
-          <h2 className="text-sm text-center font-bold mb-4">
-            Medical Assessment Details
+          <h2 className="text-lg text-center font-bold mb-6 text-gray-900">
+            Medical Assessment Report
           </h2>
 
-          {/* Existing assessment details */}
-          <div className="space-y-6">
-            {assessmentLines.map((line, index) => {
-              if (line.length > 1) {
-                const field = line[0];
-                const details = line.slice(1).join(": ");
-                return (
-                  <div key={index} className="border-b border-gray-300 pb-2">
-                    <div className="bg-gray-100 py-1 px-2">
-                      <h3 className="font-bold text-[12px] text-gray-800">
-                        {field}
-                      </h3>
-                    </div>
-                    <div className="py-2 px-4">
-                      <p className="text-[12px] text-gray-600">{details}</p>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
+          {/* Client Information */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 mt-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Client Information
+            </h3>
+            <div className="flex flex-wrap px-2 md:px-6">
+              <div className="w-1/2 pr-4 mb-2 mt-4">
+                <p className="text-sm mb-2">
+                  <span className=" font-bold text-sm">Gender:</span>{" "}
+                  {assessment.ClientInformation.Gender}
+                </p>
+                <p className="text-sm mb-2">
+                  <span className=" font-bold text-sm">
+                    Date of Assessment:
+                  </span>{" "}
+                  {assessment.ClientInformation.DateOfAssessment}
+                </p>
+                <p className="text-sm ">
+                  <span className=" font-bold text-sm">Marital Status:</span>{" "}
+                  {assessment.ClientInformation.MaritalStatus}
+                </p>
+              </div>
+              <div className="w-1/2 pl-4 mb-2 mt-4">
+                <p className="text-sm mb-2">
+                  <span className=" font-bold text-sm">Education:</span>{" "}
+                  {assessment.ClientInformation.Education}
+                </p>
+                <p className="text-sm">
+                  <span className=" font-bold text-sm">Occupation:</span>{" "}
+                  {assessment.ClientInformation.Occupation}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Social History */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 mt-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Social History
+            </h3>
+            <div className="flex flex-wrap px-2 md:px-6 mt-6">
+              <div className="w-1/2 pr-4 mb-2">
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Marital Status:</span>{" "}
+                  {assessment.SocialHistory.MaritalStatus}
+                </p>
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Spouse:</span>{" "}
+                  {assessment.SocialHistory.Spouse}
+                </p>
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Children:</span>{" "}
+                  {assessment.SocialHistory.Children}
+                </p>
+              </div>
+              <div className="w-1/2 pl-4 mb-2 px-2 md:px-6">
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Household:</span>{" "}
+                  {assessment.SocialHistory.Household}
+                </p>
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Education:</span>{" "}
+                  {assessment.SocialHistory.Education}
+                </p>
+                <p className="text-sm mb-2">
+                  <span className="font-bold">Occupation:</span>{" "}
+                  {assessment.SocialHistory.Occupation}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Presenting Concerns */}
+          <div className="mb-6 ">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 mt-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Presenting Concerns
+            </h3>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2 mt-6">
+                <span className="font-bold">Primary Symptoms:</span>{" "}
+                {assessment.PresentingConcerns.PrimarySymptoms}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Daily Impact:</span>{" "}
+                {assessment.PresentingConcerns.DailyImpact}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Duration:</span>{" "}
+                {assessment.PresentingConcerns.Duration}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Diagnosis:</span>{" "}
+                {assessment.PresentingConcerns.Diagnosis}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Seen Specialist:</span>{" "}
+                {assessment.PresentingConcerns.SeenSpecialist}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Specialist Duration:</span>{" "}
+                {assessment.PresentingConcerns.SpecialistDuration}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Treatment Goals:</span>{" "}
+                {assessment.PresentingConcerns.TreatmentGoals}
+              </p>
+            </div>
+          </div>
+
+          {/* Current Symptoms Checklist */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Current Symptoms Checklist
+            </h3>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2 mt-6">
+                <span className="font-bold">Mood:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.Mood}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Affect:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.Affect}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Thought Process:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.ThoughtProcess}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Thought Content:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.ThoughtContent}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Perceptions:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.Perceptions}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Hallucinations:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.Hallucinations}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Suicidal Thoughts:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.SuicidalThoughts}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Self-Harm:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.SelfHarm}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Eating Disorders:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.EatingDisorders}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Arrest History:</span>{" "}
+                {assessment.CurrentSymptomsChecklist.ArrestHistory}
+              </p>
+            </div>
+          </div>
+
+          {/* Diagnostic Impressions */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Diagnostic Impressions
+            </h3>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Diagnosis:</span>{" "}
+                {assessment.DiagnosticImpressions.Diagnosis}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Related Symptoms:</span>{" "}
+                {assessment.DiagnosticImpressions.RelatedSymptoms}
+              </p>
+            </div>
+          </div>
+
+          {/* Formulation */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Formulation
+            </h3>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Biological Factors:</span>{" "}
+                {assessment.Formulation.BiologicalFactors}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Psychological Factors:</span>{" "}
+                {assessment.Formulation.PsychologicalFactors.join(", ")}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Social Factors:</span>{" "}
+                {assessment.Formulation.SocialFactors.join(", ")}
+              </p>
+            </div>
+          </div>
+
+          {/* Recommendations */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Recommendations
+            </h3>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Treatment Plan:</span>{" "}
+                {assessment.Recommendations.TreatmentPlan}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">Substance Use:</span>{" "}
+                {assessment.Recommendations.SubstanceUse}
+              </p>
+              <p className="text-sm mb-2">
+                <span className="font-bold">
+                  Continued Care Recommendations:
+                </span>{" "}
+                {assessment.Recommendations.ContinuedCareRecommendations}
+              </p>
+            </div>
+          </div>
+
+          {/* Conclusion */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1 bg-gray-200 px-2">
+              Conclusion
+            </h3>
+            <div className="px-2 md:px-6">
+              <p className="text-sm mb-2">
+                <span className="font-bold">Summary:</span>{" "}
+                {assessment.Conclusion.Summary}
+              </p>
+            </div>
           </div>
 
           <button
             id="download-button"
             onClick={downloadPDF}
-            className="mt-4 py-2 px-4 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition duration-200"
+            className="mt-4 py-2 px-4 bg-gray-700 text-white font-semibold rounded-md hover:bg-gray-800 transition duration-200"
           >
             Download as PDF
           </button>

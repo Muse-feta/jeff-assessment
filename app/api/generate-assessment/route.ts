@@ -41,88 +41,76 @@ export async function POST(request: Request) {
 
   // Construct the prompt for the OpenAI model
   // Construct the prompt for the OpenAI model
-  const prompt = `
-  Generate a comprehensive psychological assessment based on the following client information:
- 
-   **Client Information:**
-  - Gender: ${gender}
-  - Date of Assessment: ${dateOfAssessment}
-  - Marital Status: ${maritalStatus}
-  - Education and Occupation: ${education}, ${occupation}
+ const prompt = `
+Role:
+You are a mental health professional tasked with generating a comprehensive mental health assessment report based on client-provided information.
+Task:
+Create a detailed mental health assessment report with each section formatted as follows, and return the output in parsable JSON format.
 
-  Additional Details:
-  - Diagnosis: ${diagnosis}
-  - Symptoms: ${symptoms}, lasting for ${symptomsDuration}, affecting daily life (${dailyImpact})
-  - Specialist Seen: ${
-    seenSpecialist ? "Yes" : "No"
-  }, Duration: ${specialistDuration}
-  - Treatment Goals: ${treatmentGoals}
-  - Household: ${householdDetails}
-  - Has Been Arrested: ${arrestHistory ? "Yes" : "No"}
-  - Medical History: ${medicalHistory}
-  - Uses Mood-Altering Substances: ${substanceUse ? "Yes" : "No"}
+Output Format (JSON):
+{
+  "ClientInformation": {
+    "Gender": "${gender}",
+    "DateOfAssessment": "${dateOfAssessment}",
+    "MaritalStatus": "${maritalStatus}",
+    "Education": "${education}",
+    "Occupation": "${occupation}"
+  },
+  "SocialHistory": {
+    "MaritalStatus": "${maritalStatus}",
+    "Spouse": "${spouse ? "Married" : "Single"}",
+    "Children": "${children ? "With children" : "No children"}",
+    "Household": "${householdDetails}",
+    "Education": "${education}",
+    "Occupation": "${occupation}"
+  },
+  "PresentingConcerns": {
+    "PrimarySymptoms": "${symptoms}",
+    "DailyImpact": "${dailyImpact}",
+    "Duration": "${symptomsDuration}",
+    "Diagnosis": "${diagnosis}",
+    "SeenSpecialist": "${seenSpecialist ? "Yes" : "No"}",
+    "SpecialistDuration": "${specialistDuration}",
+    "TreatmentGoals": "${treatmentGoals}"
+  },
+  "CurrentSymptomsChecklist": {
+    "Mood": "${mood}",
+    "Affect": "${affect}",
+    "ThoughtProcess": "${thoughtProcess}",
+    "ThoughtContent": "${thoughtContent}",
+    "Perceptions": "${perceptions}",
+    "Hallucinations": "${hallucinations ? "Yes" : "No"}",
+    "SuicidalThoughts": "${suicidalThoughts ? "Yes" : "No"}",
+    "SelfHarm": "${selfHarm ? "Yes" : "No"}",
+    "EatingDisorders": "${eatingDisorders}",
+    "ArrestHistory": "${arrestHistory}"
+  },
+  "DiagnosticImpressions": {
+    "Diagnosis": "${diagnosis}",
+    "RelatedSymptoms": "${symptoms}"
+  },
+  "Formulation": {
+    "BiologicalFactors": "${medicalHistory}",
+    "PsychologicalFactors": ["${mood}", "${affect}"],
+    "SocialFactors": ["${householdDetails}", "${occupation}"]
+  },
+  "Recommendations": {
+    "TreatmentPlan": "${treatmentPlan}",
+    "SubstanceUse": "${substanceUse}",
+    "ContinuedCareRecommendations": "..."
+  },
+  "Conclusion": {
+    "Summary": "Summarize key findings, treatment plan, and next steps here."
+  }
+}
 
-  Please organize the assessment into the following sections:
-
-  - Presenting Problems/Chief Complaint:
-  - Describe the client's primary symptoms and how they affect their daily life and functioning. Include how long they have experienced these symptoms (${symptomsDuration}) and the diagnosis (${diagnosis}).
-
-  - Behavioral Health:
-  - Detail the client’s previous mental health treatment and goals. Include whether they have seen a specialist (${
-    seenSpecialist ? "Yes" : "No"
-  }) and the duration of specialist care (${specialistDuration}). Also, highlight their treatment goals (${treatmentGoals}).
-
-  - Psychosocial Factors:
-  - Include information about the client’s family (${maritalStatus}, ${
-    spouse ? "Married" : "Single"
-  }, ${
-    children ? "With children" : "No children"
-  }), their household (${householdDetails}), education, and occupation. Note any criminal history (${
-    arrestHistory ? "Yes" : "No"
-  }) and medical history (${medicalHistory}).
-
-  - Mental Status Exam:
-  - Provide an analysis of the client’s mental status, including:
-    - Appearance/Behavior: ${appearanceBehavior}
-    - Speech/Language: ${speechLanguage}
-    - Mood: ${mood}, Affect: ${affect}
-    - Thought Process: ${thoughtProcess}, Thought Content: ${thoughtContent}
-    - Perceptions: ${perceptions}, Cognition: ${cognition}
-    - Insight: ${insight}, Judgment: ${judgment}
-    - Hallucinations: ${hallucinations ? "Yes" : "No"}
-    - Suicidal Thoughts: ${suicidalThoughts ? "Yes" : "No"}
-    - Self-Harm: ${selfHarm ? "Yes" : "No"}
-    - Eating Disorders: ${eatingDisorders ? "Yes" : "No"}
-
-  - Strengths and Risk Factors:
-  - Identify the client’s personal strengths and any potential risk factors. Include information on their support systems, personal resilience, empathy, adaptability, creativity, leadership, communication, problem-solving, integrity, teamwork, and time management (${strengthsRiskFactors}). Note if they have a history of using mood-altering substances (${
-    substanceUse ? "Yes" : "No"
-  }).
-
-  - Treatment Plan:
-  - Lay out a structured plan to address the client’s mental health concerns, including any recommendations for future specialist care, adjustments to their current treatment goals (${treatmentPlan}), or specific interventions needed based on the symptoms (${diagnosis}, ${symptoms}). Mention if referral to a specialist is recommended (${
-    seenSpecialist ? "Continued specialist care" : "Referral to a specialist"
-  }).
-
-   Conclusion:
-  - Summarize the overall assessment findings, emphasizing the importance of addressing the identified issues and the proposed treatment plan. Highlight the expected outcomes of the treatment and the need for regular follow-up to monitor progress and make necessary adjustments.
-
-  Provide this information in a cohesive narrative format, ensuring that each section connects logically to offer a holistic view of the client’s psychological condition.
-
-  so give me assessment only this the title and description display on the same line not use a new line each of the titles contain at least 2000 words not more than 3000:
-
-Date of Assessment: _______
-Gender: ________
-Marital Status: ________
-Education and Occupation: ______
-Presenting Problems/Chief Complaint: _______
-Behavioral Health: ________
-Psychosocial Factors:  ______
-Mental Status Exam: ________
-Strengths and Risk Factors: _______
-Treatment Plan: ________
-Conclusion: _______
+Ensure that the output is in valid JSON format.
 `;
+
+
+
+
+
 
   // OpenAI API call
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -158,30 +146,8 @@ Conclusion: _______
   var assessment =
     result.choices?.[0]?.message?.content || "No assessment generated.";
   assessment = assessment.replace(/[*#]/g, "");
-  assessment = assessment.replace(
-    /(?<!\b(Date of Assessment|Gender|Marital Status|Education and Occupation|Presenting Problems\/Chief Complaint|Behavioral Health|Psychosocial Factors|Mental Status Exam|Strengths and Risk Factors|Treatment Plan|Conclusion)):\s/g,
-    ""
-  );
-  // assessment = assessment.replace(/\n/g, " ");
-  const titles = [
-    "Date of Assessment:",
-    "Gender:",
-    "Marital Status:",
-    "Education and Occupation:",
-    "Presenting Problems/Chief Complaint:",
-    "Behavioral Health:",
-    "Psychosocial Factors:",
-    "Mental Status Exam:",
-    "Strengths and Risk Factors:",
-    "Treatment Plan:",
-    "Conclusion:",
-  ];
-  titles.forEach((title) => {
-    const regex = new RegExp(`\\s*${title}`, "g");
-    assessment = assessment.replace(regex, `\n${title}`);
-  });
-  assessment = assessment.replace(/\n(?=\w+:\s)/g, " ");
-  console.log("Assessment:", assessment);
+  const parsedAssessment = JSON.parse(assessment);
+  console.log(parsedAssessment);
 
-  return NextResponse.json({ assessment });
+  return NextResponse.json(parsedAssessment);
 }
