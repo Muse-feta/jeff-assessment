@@ -223,7 +223,7 @@ const AssessmentForm: React.FC = () => {
         onSubmit={handleSubmit}
       >
         <h1 className="text-xl text-center font-bold text-gray-800 mb-6">
-          Medical Assessment Form
+          Mental Health Evaluation Form
         </h1>
 
         {/* Personal Information */}
@@ -734,7 +734,7 @@ const AssessmentForm: React.FC = () => {
           ref={assessmentRef}
         >
           <h2 className="text-lg text-center font-bold mb-6 text-gray-900">
-            Medical Assessment Report
+            Mental Health Evaluation
           </h2>
 
           {/* Client Information */}
@@ -977,9 +977,7 @@ const AssessmentForm: React.FC = () => {
             </div>
             <div className="px-2 md:px-6">
               <p className="text-sm mb-2">
-                <span className="font-bold">
-                  Explanation Of Illness:
-                </span>{" "}
+                <span className="font-bold">Explanation Of Illness:</span>{" "}
                 {assessment.Conclusion.ExplanationOfIllness}
               </p>
             </div>
