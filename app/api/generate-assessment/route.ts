@@ -37,6 +37,7 @@ export async function POST(request: Request) {
     treatmentPlan,
     substanceUse,
     medicalHistory,
+    modelType,
   } = await request.json();
 
   // Construct the prompt for the OpenAI model
@@ -99,15 +100,19 @@ Output Format (JSON):
     "SubstanceUse": "${substanceUse}",
     "ContinuedCareRecommendations": "..."
   },
-  "Conclusion": {
-    "Summary": "Summarize key findings, treatment plan, and next steps here.",
-    "IdentityAndCulturalConsiderations": "Consider age, culture, spirituality/religious affiliation, sexual orientation, etc., and how cultural identifications/preferences may impact recovery and/or treatment preferences. What influences does culture play in their lives in their understanding of the illness?",
-    "ExplanationOfIllness": "Explain why the person is seeking help now. Include the person’s understanding and/or perception. Identify any differences that may exist in your understandings.",
-    "StrengthsPreferencesAndPriorities": "Summarize relevant personal talents/interests/coping skills as well as natural supports & community connections.",
-    "StageOfChange": "Provide the stage of change and the reason for this determination for each major treatment goal.",
-    "SummaryOfPriorityNeedsAndBarriers": "Discuss how symptoms, functional impairments, or other factors/issues may interfere with recovery progress. Address how the barrier or need impacts the client’s life and specify where the client’s behavioral health symptoms and life stressors show up. Consider the psychosocial environment (e.g., housing, employment, support system, acute/chronic stressors, etc.)",
-    "Hypotheses": "Include central themes, insights, understandings, underpinnings, including relevance of past treatment success/failure.",
-    "TreatmentRecommendations": "Suggest the level and intensity of services this individual needs based on the above information, and justify these recommendations."
+   "Conclusion": {
+    "Summary": "Based on the provided data, the client presents with ${symptoms}. The diagnosis is ${diagnosis}, with a treatment plan focusing on ${treatmentPlan}. Key next steps include ${treatmentGoals}.",
+    "IdentityAndCulturalConsiderations": "The client identifies as ${gender}, with potential cultural factors like ${maritalStatus} and household dynamics (${householdDetails}) impacting recovery. Education (${education}) and occupation (${occupation}) also play a role in their understanding of the illness.",
+    "ExplanationOfIllness": "The client is seeking help now due to ${symptomsDuration}-long symptoms affecting daily functioning (${dailyImpact}). They perceive the condition as ${diagnosis}, which aligns with the assessment.",
+    "StrengthsPreferencesAndPriorities": "The client has strengths such as ${strengthsRiskFactors}, along with community and natural supports. These assets can aid in coping and recovery.",
+    "StageOfChange": "The client is at the ${
+      treatmentPlan.stageOfChange || "contemplation"
+    } stage for achieving the treatment goals of ${treatmentGoals}. This determination is based on their motivation and engagement.",
+    "SummaryOfPriorityNeedsAndBarriers": "Symptoms such as ${symptoms} and barriers like ${dailyImpact} impede recovery. Environmental factors (${householdDetails}, ${occupation}) also contribute to stressors impacting progress.",
+    "Hypotheses": "Central themes include ${diagnosis}-related challenges, ${mood}, and ${affect}. Past treatment (${
+  seenSpecialist ? "engaged" : "not engaged"
+}) informs the current approach.",
+    "TreatmentRecommendations": "It is recommended to initiate ${treatmentPlan} with services tailored to address ${symptoms} and enhance coping mechanisms (${strengthsRiskFactors})."
   }
 }
 
@@ -116,7 +121,7 @@ Ensure that the output is in valid JSON format.
 
 
 
-
+const model = modelType || "gpt-3.5-turbo";
 
 
 
@@ -128,7 +133,7 @@ Ensure that the output is in valid JSON format.
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4",
+      model: model,
       messages: [
         {
           role: "system",
@@ -144,10 +149,7 @@ Ensure that the output is in valid JSON format.
   if (!response.ok) {
     const errorResponse = await response.json();
     console.error("OpenAI API error:", errorResponse);
-    return NextResponse.json(
-      { error: "Failed to generate assessment." },
-      { status: 500 }
-    );
+    return NextResponse.json(errorResponse);
   }
 
   const result = await response.json();

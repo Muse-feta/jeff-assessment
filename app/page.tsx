@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "sonner";
 import { useState, ChangeEvent, FormEvent, useRef } from "react";
-import { useAssessment } from "@/context/data-provider";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -108,20 +108,15 @@ const AssessmentForm: React.FC = () => {
     treatmentPlan: "",
     substanceUse: false,
     medicalHistory: "",
+    modelType: "",
   });
 
 
   const [assessment, setAssessment] = useState<AssessmentData | null>(null);
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Updates the formData state based on user input changes.
- * Supports input types: text, textarea, select, and checkbox.
- * 
- * @param e - The change event triggered by the user interaction.
- *   Supports HTMLInputElement, HTMLTextAreaElement, and HTMLSelectElement.
- */
-/******  e5f646f6-1111-4a8b-b6fb-387a1dc6e924  *******/  const handleChange = (
+
+
+const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -160,9 +155,16 @@ const AssessmentForm: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log("data", data);
+      console.log(data)
       setAssessment(data);
       console.log("assessment", assessment);
+      if (data.error.code === "insufficient_quota") {
+        toast.error(
+          "You exceeded your current quota, please check your plan and billing details."
+        );
+        setAssessment(null);
+      }
+      
 
       //  console.log("assessmentData", assessmentData);
       // Navigate to results page
@@ -227,10 +229,27 @@ const AssessmentForm: React.FC = () => {
         </h1>
 
         {/* Personal Information */}
+
         <h2 className="text-md font-semibold mb-4 border-b pb-2 bg-gray-100 px-2 rounded-t-lg shadow-sm text-gray-700">
           Personal Information
         </h2>
         <div className="grid grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Model Type *
+            </label>
+            <select
+              name="modelType"
+              className="border p-2 rounded-lg w-full mt-1 focus:outline-none focus:ring focus:ring-blue-300"
+              value={formData.modelType}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Model</option>
+              <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+              <option value="gpt-4">GPT-4</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-600">
               Gender *
@@ -1026,6 +1045,7 @@ const AssessmentForm: React.FC = () => {
           </button>
         </div>
       )}
+      <Toaster position="top-center" richColors />
     </div>
   );
 };
